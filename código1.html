@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Gestão: Fluxo de Estoque, Custódia e Inventários</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--background); color: var(--text); padding: 25px; line-height: 1.5; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; }
+        header p { color: #94a3b8; font-size: 0.85rem; }
+
+        /* Mensagens de Alerta (Toast) */
+        .toast {
+            display: none;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Layout Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        @media(max-width: 900px) { .app-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Formulários */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        input, select, textarea {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            background: var(--background);
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #fff; }
+        
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); }
+
+        /* Tabelas */
+        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        th { background: #f1f5f9; font-weight: 600; color: var(--text-muted); }
+        tr:hover { background: #f8fafc; }
+
+        /* Statuses */
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        .badge-disponivel { background: #dcfce7; color: #166534; }
+        .badge-uso { background: #fef9c3; color: #854d0e; }
+        .badge-danificado { background: #fee2e2; color: #991b1b; }
+
+        /* Abas de Navegação */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>📦 E-Gestão Integrada de Estoque</h1>
+            <p>Rastreamento de Ativos, Prevenção de Perdas e Auditoria de Inventário</p>
+        </div>
+        <div style="font-size: 0.85rem; text-align: right;">
+            <strong>Fuso de Operação:</strong> Localizado<br>
+            <strong>Status do Sistema:</strong> Ativo (Local Client-Side)
+        </div>
+    </header>
+
+    <div id="toastMessage" class="toast"></div>
+
+    <div class="app-grid">
+        
+        <div class="card">
+            <div class="card-title">📝 Cadastro com Rastreabilidade (Entrada)</div>
+            <form id="formCadastro">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome do Ativo / Ferramenta</label>
+                        <input type="text" id="nome" required placeholder="Ex: Serra Circular Dewalt">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria">
+                            <option value="Ferramenta">Ferramenta</option>
+                            <option value="Equipamento">Equipamento</option>
+                            <option value="Consumível">Consumível</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quantidade">Qtd. Inicial em Sistema</label>
+                        <input type="number" id="quantidade" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="localizacao">Endereçamento Físico (Rastreabilidade)</label>
+                        <input type="text" id="localizacao" required placeholder="Ex: Armário B, Prateleira 2">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Cadastrar Ativo</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🔄 Fluxo de Movimentação & Termo de Custódia</div>
+            <form id="formMovimentacao">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="produto_id">Selecione o Ativo</label>
+                        <select id="produto_id" required>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_movimentacao">Tipo de Movimento</label>
+                        <select id="tipo_movimentacao" onchange="verificarTipoMovimentacao(this)">
+                            <option value="Retirada (Custódia)">Retirada (Para Uso/Custódia)</option>
+                            <option value="Devolução">Devolução ao Estoque</option>
+                            <option value="Consumo Interno">Consumo Interno (Baixa Definitiva)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="qtd_movimentada">Quantidade</label>
+                        <input type="number" id="qtd_movimentada" min="1" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario">Responsável / Custodiante</label>
+                        <input type="text" id="usuario" required placeholder="Nome do Técnico/Encarregado">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="condicao_transporte">Condição Física do Material (Prevenção de Danos)</label>
+                        <select id="condicao_transporte">
+                            <option value="Excelente">Excelente / Sem Detalhes</option>
+                            <option value="Bom">Bom / Uso Normal</option>
+                            <option value="Com Avarias Leves">Com Avarias Leves</option>
+                            <option value="Avariado / Danificado no Transporte">⚠️ Avariado / Danificado no Transporte</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="motivo">Motivo da Movimentação</label>
+                        <input type="text" id="motivo" required placeholder="Ex: Obra Centro / Manutenção preventiva">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Registrar Movimentação</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 25px;">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('estoque-atual')">📦 Estoque Atual & Rastreabilidade</button>
+            <button class="tab-btn" onclick="switchTab('historico')">📜 Histórico de Custódia e Fluxo</button>
+            <button class="tab-btn" onclick="switchTab('auditoria')">🔍 Auditorias & Inventários Rotativos</button>
+        </div>
+
+        <div id="estoque-atual" class="tab-content active">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ativo / Item</th>
+                            <th>Categoria</th>
+                            <th>Qtd. Físico (Sistema)</th>
+                            <th>Endereço Físico</th>
+                            <th>Custodiante Atual</th>
+                            <th>Status de Disponibilidade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaEstoque">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="historico" class="tab-content">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Ativo</th>
+                            <th>Operação</th>
+                            <th>Qtd.</th>
+                            <th>Responsável</th>
+                            <th>Motivo / Obra</th>
+                            <th>Estado no Recebimento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaHistorico">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="auditoria" class="tab-content">
+            <div style="margin-bottom: 20px;">
+                <h4>Conferência Periódica contra Perdas e Extravios</h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">
+                    Para combater a divergência entre o sistema e o físico, digite a quantidade física realmente encontrada na prateleira. O sistema aplicará automaticamente os ajustes de perda se houverem.
+                </p>
+                
+                <form id="formInventario">
+                    <div style="max-width: 300px; margin-bottom: 15px;" class="form-group">
+                        <label for="inventariante">Nome do Auditor / Conferente</label>
+                        <input type="text" id="inventariante" required placeholder="Ex: Fiscal de QSMS">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ativo</th>
+                                    <th>Endereço Físico</th>
+                                    <th>Qtd. Esperada no Sistema</th>
+                                    <th>Qtd. Real Constatada Fisicamente</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaAuditoria">
+                                </tbody>
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="margin-top: 15px;">Concluir e Corrigir Divergências Físicas</button>
+                </form>
+            </div>
+
+            <h4 style="margin-top: 30px; margin-bottom: 10px;">Logs de Auditorias Anteriores</h4>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data do Inventário</th>
+                            <th>Conferente</th>
+                            <th>Divergências Identificadas</th>
+                            <th>Status de Integridade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaLogsInventario">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // BASE DE DADOS DO CLIENTE (LOCALSTORAGE)
+    // ==========================================
+    let dados = JSON.parse(localStorage.getItem('estoque_db')) || {
+        produtos: [
+            { id: 1, nome: "Furadeira de Impacto Bosch", categoria: "Ferramenta", quantidade: 5, localizacao: "Prateleira A1", status: "Disponível", custodiante: "-" },
+            { id: 2, nome: "Cabo Flexível Sil 10mm (Metro)", categoria: "Consumível", quantidade: 150, localizacao: "Bobina B3", status: "Disponível", custodiante: "-" },
+            { id: 3, nome: "Multímetro Digital Fluke", categoria: "Equipamento", quantidade: 2, localizacao: "Armário C2", status: "Em Uso", custodiante: "Carlos Silva" },
+            { id: 4, nome: "Disjuntor DIN 50A", categoria: "Consumível", quantidade: 30, localizacao: "Caixa D4", status: "Disponível", custodiante: "-" }
+        ],
+        movimentacoes: [
+            { id: 1, data: "2026-07-15 10:30", produto: "Multímetro Digital Fluke", tipo: "Retirada (Custódia)", quantidade: 1, usuario: "Carlos Silva", motivo: "Manutenção de painel no cliente X", condicao: "Excelente" },
+            { id: 2, data: "2026-07-15 11:15", produto: "Disjuntor DIN 50A", tipo: "Consumo Interno", quantidade: 5, usuario: "Marcos Souza", motivo: "Instalação padrão", condicao: "Excelente" }
+        ],
+        inventarios: [
+            { id: 1, data: "2026-07-10", responsavel: "Aline Costa", status: "Concluído", divergencias: 0 }
+        ]
+    };
+
+    // Salva os dados no cache local do navegador
+    function salvarLocal() {
+        localStorage.setItem('estoque_db', JSON.stringify(dados));
+        atualizarInterface();
+    }
+
+    // Exibe avisos toast de sucesso/erro na interface
+    function exibirMensagem(texto) {
+        const toast = document.getElementById("toastMessage");
+        toast.innerText = texto;
+        toast.style.display = "block";
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 4000);
+    }
+
+    // Formatar data no padrão brasileiro
+    function formatarDataHora() {
+        const agora = new Date();
+        const dia = String(agora.getDate()).padStart(2, '0');
+        const mes = String(agora.getMonth() + 1).padStart(2, '0');
+        const ano = agora.getFullYear();
+        const hora = String(agora.getHours()).padStart(2, '0');
+        const minuto = String(agora.getMinutes()).padStart(2, '0');
+        return `${ano}-${mes}-${dia} ${hora}:${minuto}`;
+    }
+
+    // ==========================================
+    // PROCESSADORES DE FORMULÁRIO (Lógica JS Puro)
+    // ==========================================
+
+    // 1. Cadastrar Novo Ativo/Material
+    document.getElementById("formCadastro").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const novoProd = {
+            id: Date.now(),
+            nome: document.getElementById("nome").value,
+            categoria: document.getElementById("categoria").value,
+            quantidade: parseInt(document.getElementById("quantidade").value),
+            localizacao: document.getElementById("localizacao").value,
+            status: "Disponível",
+            custodiante: "-"
+        };
+
+        dados.produtos.push(novoProd);
+        salvarLocal();
+        
+        document.getElementById("formCadastro").reset();
+        exibirMensagem("Ativo cadastrado com sucesso no endereçamento informado!");
+    });
+
+    // 2. Registrar Movimentação e Tratar Custódias/Danos
+    document.getElementById("formMovimentacao").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const prodId = parseInt(document.getElementById("produto_id").value);
+        const tipo = document.getElementById("tipo_movimentacao").value;
+        const qtd = parseInt(document.getElementById("qtd_movimentada").value);
+        const usuario = document.getElementById("usuario").value;
+        const motivo = document.getElementById("motivo").value;
+        const condicao = document.getElementById("condicao_transporte").value;
+
+        const produto = dados.produtos.find(p => p.id === prodId);
+
+        if (!produto) return;
+
+        if (tipo === 'Retirada (Custódia)' || tipo === 'Consumo Interno') {
+            if (produto.quantidade < qtd) {
+                alert("Erro: Quantidade insuficiente em estoque físico!");
+                return;
+            }
+            produto.quantidade -= qtd;
+            if (tipo === 'Retirada (Custódia)') {
+                produto.status = 'Em Uso';
+                produto.custodiante = usuario;
+            }
+        } else if (tipo === 'Devolução') {
+            produto.quantidade += qtd;
+            produto.status = 'Disponível';
+            produto.custodiante = '-';
+        }
+
+        dados.movimentacoes.push({
+            id: Date.now(),
+            data: formatarDataHora(),
+            produto: produto.nome,
+            tipo: tipo,
+            quantidade: qtd,
+            usuario: usuario,
+            motivo: motivo,
+            condicao: condicao
+        });
+
+        salvarLocal();
+        document.getElementById("formMovimentacao").reset();
+        exibirMensagem("Movimentação de fluxo físico salva e arquivada com sucesso!");
+    });
+
+    // 3. Registrar Auditoria/Inventário Rotativo (Ajusta perdas sistêmicas)
+    document.getElementById("formInventario").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const auditor = document.getElementById("inventariante").value;
+        let divergencias = 0;
+
+        dados.produtos.forEach(prod => {
+            const inputQtdReal = document.getElementById(`qtd_real_${prod.id}`);
+            if (inputQtdReal) {
+                const qtdReal = parseInt(inputQtdReal.value);
+                if (prod.quantidade !== qtdReal) {
+                    divergencias++;
+
+                    // Cria um lançamento de ajuste de perda
+                    dados.movimentacoes.push({
+                        id: Date.now() + prod.id, // ID único seguro
+                        data: formatarDataHora(),
+                        produto: prod.nome,
+                        tipo: "Ajuste de Inventário",
+                        quantidade: Math.abs(prod.quantidade - qtdReal),
+                        usuario: auditor,
+                        motivo: "Ajuste de Auditoria Física de Estoque",
+                        condicao: "N/A"
+                    });
+
+                    prod.quantidade = qtdReal; // Alinha o sistema com o físico constatado
+                }
+            }
+        });
+
+        dados.inventarios.push({
+            id: Date.now(),
+            data: new Date().toISOString().split('T')[0],
+            responsavel: auditor,
+            status: "Concluído",
+            divergencias: divergencias
+        });
+
+        salvarLocal();
+        document.getElementById("formInventario").reset();
+        exibirMensagem(`Inventário encerrado! Foram localizadas e corrigidas ${divergencias} divergência(s).`);
+    });
+
+    // ==========================================
+    // ATUALIZAÇÃO DA INTERFACE DINÂMICA
+    // ==========================================
+    function atualizarInterface() {
+        // Atualiza selects de movimentações
+        const selectProd = document.getElementById("produto_id");
+        selectProd.innerHTML = "";
+        dados.produtos.forEach(prod => {
+            selectProd.innerHTML += `<option value="${prod.id}">${prod.nome} (Sist: ${prod.quantidade}) - Loc: ${prod.localizacao}</option>`;
+        });
+
+        // Aba 1: Renderiza Tabela de Estoque Atual
+        const tbodyEstoque = document.getElementById("tabelaEstoque");
+        tbodyEstoque.innerHTML = "";
+        dados.produtos.forEach(prod => {
+            const badgeClass = prod.status === 'Disponível' ? 'badge-disponivel' : 'badge-uso';
+            tbodyEstoque.innerHTML += `
+                <tr>
+                    <td><strong>${prod.nome}</strong></td>
+                    <td>${prod.categoria}</td>
+                    <td><strong>${prod.quantidade} unidades</strong></td>
+                    <td>📍 ${prod.localizacao}</td>
+                    <td>👤 ${prod.custodiante}</td>
+                    <td><span class="badge ${badgeClass}">${prod.status}</span></td>
+                </tr>
+            `;
+        });
+
+        // Aba 2: Renderiza Histórico de Movimentações (Últimas no topo)
+        const tbodyHist = document.getElementById("tabelaHistorico");
+        tbodyHist.innerHTML = "";
+        [...dados.movimentacoes].reverse().forEach(mov => {
+            const condicaoClass = mov.condicao.includes('Avariado') ? 'badge-danificado' : 'badge-disponivel';
+            tbodyHist.innerHTML += `
+                <tr>
+                    <td>${mov.data}</td>
+                    <td><strong>${mov.produto}</strong></td>
+                    <td>${mov.tipo}</td>
+                    <td>${mov.quantidade}</td>
+                    <td>👤 ${mov.usuario}</td>
+                    <td>${mov.motivo}</td>
+                    <td><span class="badge ${condicaoClass}">${mov.condicao}</span></td>
+                </tr>
+            `;
+        });
+
+        // Aba 3: Renderiza Lista para Auditoria
+        const tbodyAuditoria = document.getElementById("tabelaAuditoria");
+        tbodyAuditoria.innerHTML = "";
+        dados.produtos.forEach(prod => {
+            tbodyAuditoria.innerHTML += `
+                <tr>
+                    <td><strong>${prod.nome}</strong></td>
+                    <td>📍 ${prod.localizacao}</td>
+                    <td><strong>${prod.quantidade}</strong></td>
+                    <td>
+                        <input type="number" id="qtd_real_${prod.id}" value="${prod.quantidade}" min="0" required style="width: 100px; padding: 4px 8px;">
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Aba 3: Logs das Auditorias Concluídas
+        const tbodyLogs = document.getElementById("tabelaLogsInventario");
+        tbodyLogs.innerHTML = "";
+        [...dados.inventarios].reverse().forEach(inv => {
+            const integridadeClass = inv.divergencias === 0 ? 'badge-disponivel' : 'badge-danificado';
+            const integridadeText = inv.divergencias === 0 ? 'Aprovado sem Perdas' : 'Ajustado pós Auditoria';
+            tbodyLogs.innerHTML += `
+                <tr>
+                    <td>${inv.data}</td>
+                    <td>👤 ${inv.responsavel}</td>
+                    <td><strong style="color: ${inv.divergencias > 0 ? 'var(--danger)' : 'var(--success)'}">${inv.divergencias} divergência(s)</strong></td>
+                    <td><span class="badge ${integridadeClass}">${integridadeText}</span></td>
+                </tr>
+            `;
+        });
+    }
+
+    // Gerenciador das Abas Visuais
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // Desativa/Ativa campo de condições físicas de forma coerente
+    function verificarTipoMovimentacao(selectElement) {
+        const condicaoSelect = document.getElementById('condicao_transporte');
+        if (selectElement.value === 'Retirada (Custódia)') {
+            condicaoSelect.value = 'Excelente';
+        }
+    }
+
+    // Inicialização ao carregar a página
+    document.addEventListener("DOMContentLoaded", () => {
+        atualizarInterface();
+    });
+</script>
+</body>
+</html>

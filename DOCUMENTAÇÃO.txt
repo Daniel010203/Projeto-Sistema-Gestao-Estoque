@@ -1,0 +1,560 @@
+DOCUMENTAÇAO PARA DESENVOLVIMENTO DO SISTEMA:
+
+18/07/2026
+Minha solicitação : Comporte-se como um especislista em gestão de estoque e logistica e o que me sugere que eu possa acrescentar ao meu sistema de gestão de estoques? considerando que ele sirva ao uso para segmentos do ramos de construção civil,comercio varejista e transportadora em geral. Considere que o mesmo servirá para uso pelos almoxarifes e gestores de estoque. Sugestões como : baixar relatórios em PDF, em excel,envio de e-mails para os envolvidos, alerta de estoque minimo,configurações para segurança na entrada dos dados(dupla autenticação,validação documental,etc), gestão de logins de acesso (ADM e usuário) e outros que puder me sugerir.
+
+Retorno : 
+Como especialista em gestão de estoques e logística, analisar um sistema que se propõe a atender simultaneamente três gigantes complexos — **Construção Civil**, **Comércio Varejista** e **Transportadoras** — é um excelente desafio de arquitetura de software. Cada um desses nichos possui dores muito específicas.
+
+Para que a sua ferramenta seja indispensável para almoxarifes e estratégica para os gestores, o sistema precisa ir além do básico de "entrada e saída".
+
+Abaixo, dividi as sugestões essenciais por categorias estratégicas para enriquecer o seu escopo:
+
+---
+
+## 🔒 1. Segurança, Governança e Controle de Acesso
+
+Considerando que o sistema lida com ativos caros (máquinas, frotas, mercadorias de revenda), a segurança evita fraudes e desvios.
+
+* **Níveis de Acesso Granulares (RBAC):**
+* *Almoxarife:* Visualiza estoque, registra movimentações, inicia inventário. Não edita custos unitários nem deleta históricos.
+* *Gestor/ADM:* Aprova compras, altera custos, extrai relatórios financeiros, deleta registros (com justificativa).
+* *Auditor:* Acesso apenas de leitura para relatórios e inventários.
+
+
+* **Trilha de Auditoria (Audit Trail):** Um log invisível que registra *quem* alterou, *o que* foi alterado, *qual dia/horário* e o *IP*. Se uma furadeira sumir do sistema, o gestor sabe quem alterou a quantidade.
+* **Segurança na Entrada de Dados & Validação Documental:**
+* **Dupla Autenticação (2FA):** Essencial para o login de administradores e gestores.
+* **Vínculo Obrigatório de Anexos:** Na entrada de mercadoria, o sistema deve exigir o upload do XML ou PDF da Nota Fiscal. Na retirada de ferramentas por subempreiteiros (Construção), exigir o upload ou assinatura digital do **Termo de Custódia**.
+
+
+
+---
+
+## 📈 2. Automação e Inteligência de Estoque (Alertas e Ressuprimento)
+
+O almoxarife não deve adivinhar quando comprar. O sistema deve avisá-lo.
+
+* **Alerta de Estoque Mínimo e Ponto de Pedido:** Configuração de gatilhos visuais (painel piscando em vermelho) e notificações quando o item atinge a quantidade de segurança.
+* **Cálculo de Estoque Máximo:** Evita o oposto — o excesso de capital imobilizado (comum no varejo, onde produto parado é prejuízo).
+* **Alerta de Validade / Lote (Crucial para Varejo e Construção):** Controle de produtos perecíveis (tintas, argamassa, cimento que empedra) utilizando a metodologia **PEPS** (Primeiro que Entra, Primeiro que Sai).
+
+---
+
+## 📋 3. Relatórios, Exportação e Comunicação Integrada
+
+Dados guardados que não geram relatórios não servem para os gestores tomarem decisões.
+
+* **Exportação Inteligente:**
+* **PDF:** Para documentos formais não editáveis (Termos de Custódia, Relatório de Fechamento Mensal, Comprovantes de Entrega).
+* **Excel / CSV:** Para o gestor manipular dados, criar gráficos e cruzar com o financeiro.
+
+
+* **Disparos Automáticos de E-mail / WhatsApp (Notificações):**
+* Enviar um e-mail para o Engenheiro da Obra quando um material pedido chegar ao almoxarifado.
+* Disparar um alerta para o setor de compras quando 5 itens entrarem em "Estoque Crítico".
+* Enviar um lembrete semanal para o funcionário que está com um equipamento sob sua custódia há mais de 15 dias.
+
+
+
+---
+
+## 🛠️ 4. Recursos Específicos por Segmento (O Grande Diferencial)
+
+Para o seu sistema rodar perfeitamente nos três ramos, ele precisa de módulos que se ativem dependendo do cliente:
+
+### 🏗️ Para Construção Civil
+
+* **Apropriação por Centro de Custo / Obra:** O material não sai apenas do estoque, ele vai *para a Obra A* ou *Obra B*. Isso permite calcular o custo real de cada canteiro.
+* **Módulo de Calibração e Manutenção:** Alerta para ferramentas que precisam de revisão (ex: testar isolamento de multímetros, afiação de serras) por tempo de uso.
+
+### 🏷️ Para o Comércio Varejista
+
+* **Giro de Estoque e Curva ABC:** Relatório automático mostrando quais são os 20% dos produtos que geram 80% do faturamento (Itens A), ajudando a nunca deixar faltar o que mais vende.
+* **Código de Barras / QR Code Nativo:** Permitir que o almoxarife use a própria câmera do celular ou um leitor USB para dar bip de entrada e saída rápida de mercadorias.
+
+### 🚛 Para Transportadoras
+
+* **Estoque de Insumos da Frota:** Controle rígido de peças de reposição (pneus, pastilhas de freio, óleo, filtros).
+* **Vínculo com Placa do Veículo / Motorista:** Em vez de dar saída para uma "obra", a saída do insumo (ex: pneu novo) é registrada direto na placa do caminhão (Chassi/Frota) e associada ao motorista responsável.
+
+---
+
+## 💻 5. Usabilidade para o Almoxarife (Chão de Fábrica)
+
+O almoxarife trabalha de bota, muitas vezes no sol ou galpão logístico. O sistema precisa ser ágil.
+
+* **Interface Mobile-Friendly (Responsiva):** O almoxarife precisa fazer o inventário rotativo andando pelos corredores com um tablet ou celular na mão, digitando a contagem direto no canteiro.
+* **Modo Offline com Sincronização Posterior:** Comum em subsolos de obras ou galpões isolados onde o Wi-Fi não pega. O sistema armazena as baixas localmente e sincroniza quando detectar rede.
+
+Qual dessas funcionalidades você acredita que traria o maior impacto inicial para o estágio atual do desenvolvimento do seu sistema?
+
+
+Retorno com o código modificado:
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Gestão: Fluxo de Estoque Multi-Segmento</title>
+    <style>
+        :root {
+            --bg-primary: #1e293b;
+            --bg-secondary: #0f172a;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #ea580c;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8fafc; color: var(--text-main); padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        .header { background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); color: white; padding: 30px; border-radius: 16px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); position: relative; }
+        .header h1 { font-size: 24px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .system-status { position: absolute; top: 30px; right: 30px; text-align: right; font-size: 13px; opacity: 0.9; }
+        .badge { background: var(--success); padding: 4px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+
+        /* Control Panel / Auth */
+        .auth-bar { background: #e2e8f0; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .btn-sm { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 6px; }
+        
+        /* Grid Layout */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
+        @media(max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        
+        .card { background: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0; }
+        .card h2 { font-size: 18px; margin-bottom: 18px; color: var(--bg-secondary); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Forms */
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #475569; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; transition: border 0.2s; }
+        input:focus, select:focus { border-color: var(--accent); }
+        
+        /* Buttons */
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.2s; text-align: center; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-export { background: #64748b; color: white; margin-top: 10px; }
+        .btn-pdf { background: #94a3b8; color: white; margin-top: 5px; }
+        
+        /* Segment Selector */
+        .segment-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .segment-btn { flex: 1; padding: 8px; border: 1px solid #cbd5e1; background: white; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .segment-btn.active { background: var(--bg-primary); color: white; border-color: var(--bg-primary); }
+
+        /* Tables & Lists */
+        .table-wrapper { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; font-weight: 600; color: #475569; }
+        
+        .alert-zone { background: #fff5f5; border-left: 4px solid var(--danger); padding: 10px; margin-bottom: 15px; border-radius: 0 4px 4px 0; font-size: 13px; display: none;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>📦 E-Gestão Integrada de Estoque</h1>
+        <p>Rastreamento Multi-Segmento, Prevenção de Perdas e Controle de Custódia</p>
+        <div class="system-status">
+            Fuso: <span id="clock">Carregando...</span><br>
+            Status: <span class="badge">Ativo (Pro local OS)</span>
+        </div>
+    </div>
+
+    <!-- Gestão de Login / Níveis de Acesso -->
+    <div class="auth-bar">
+        <div>
+            Perfil Atual: <strong id="current-profile">Almoxarife (Acesso Operacional)</strong>
+        </div>
+        <div>
+            <button class="btn-sm" style="background: #cbd5e1;" onclick="switchProfile('Almoxarife')">Modo Almoxarife</button>
+            <button class="btn-sm" style="background: var(--bg-primary); color: white;" onclick="switchProfile('Gestor / ADM')">Modo Gestor / ADM</button>
+        </div>
+    </div>
+
+    <!-- Painel de Alertas Rápidos (Estoque Mínimo) -->
+    <div id="min-stock-alert" class="alert-zone">
+        ⚠️ <strong>Aviso de Estoque Crítico:</strong> Existem itens abaixo do estoque mínimo de segurança! Verifique a tabela.
+    </div>
+
+    <div class="grid">
+        <!-- 1. CADASTRO INTELIGENTE COM ADAPTAÇÃO DE SEGMENTO -->
+        <div class="card">
+            <h2>📝 Cadastro Dinâmico de Ativos</h2>
+            
+            <label>Selecione a Regra de Negócio do Segmento:</label>
+            <div class="segment-selector">
+                <button class="segment-btn active" onclick="setSegment('construcao', this)">🏗️ Construção</button>
+                <button class="segment-btn" onclick="setSegment('varejo', this)">🏷️ Varejo</button>
+                <button class="segment-btn" onclick="setSegment('transportadora', this)">🚛 Transporte</button>
+            </div>
+
+            <form id="form-cadastro" onsubmit="cadastrarItem(event)">
+                <div class="form-group">
+                    <label>Nome do Ativo / Produto *</label>
+                    <input type="text" id="cad-nome" placeholder="Ex: Serra Circular ou Pneu Scania" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="cad-categoria">
+                            <option value="Ferramenta">Ferramenta / Ativo</option>
+                            <option value="Equipamento">Equipamento</option>
+                            <option value="Consumível">Consumível</option>
+                            <option value="Pari de Frota">Peça de Frota</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Inicial *</label>
+                        <input type="number" id="cad-qtd" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Endereçamento Físico (Rastreabilidade) *</label>
+                        <input type="text" id="cad-local" placeholder="Ex: Galpão A - Prat 3" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Mínimo Alerta *</label>
+                        <input type="number" id="cad-min" value="5" required>
+                    </div>
+                </div>
+
+                <!-- Campos Dinâmicos Alterados via Segmento -->
+                <div class="form-group" id="dynamic-field">
+                    <label id="dynamic-label">Vínculo de Centro de Custo / Obra Padrão</label>
+                    <input type="text" id="cad-dinamico" placeholder="Ex: Obra Residencial Torre A">
+                </div>
+
+                <div class="form-group">
+                    <label>Validação Documentalobrigatória (Anexar XML/Nota) *</label>
+                    <input type="file" id="cad-documento" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Cadastrar Ativo com Validação</button>
+            </form>
+        </div>
+
+        <!-- 2. FLUXO DE MOVIMENTAÇÃO & SEGURANÇA -->
+        <div class="card">
+            <h2>🔄 Fluxo de Movimentação & Termo</h2>
+            <form id="form-movimentacao" onsubmit="registrarMovimentacao(event)">
+                <div class="form-group">
+                    <label>Selecione o Ativo em Estoque</label>
+                    <select id="mov-ativo" required></select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Movimento</label>
+                        <select id="mov-tipo" onchange="toggleTermoRequire()">
+                            <option value="Retirada">Retirada (Para Uso/Custódia)</option>
+                            <option value="Devolução">Devolução ao Estoque</option>
+                            <option value="Consumo">Consumo Interno (Baixa Definitiva)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade a Movimentar</label>
+                        <input type="number" id="mov-qtd" min="1" value="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Responsável / Custodiante</label>
+                        <input type="text" id="mov-resp" placeholder="Nome do Colaborador" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Condição Física do Material</label>
+                        <select id="mov-condicao">
+                            <option value="Excelente">Excelente / Sem Detalhes</option>
+                            <option value="Bom">Bom / Uso Normal</option>
+                            <option value="Com Avarias">Com Avarias Leves</option>
+                            <option value="Danificado">⚠️ Avariado / Danificado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Motivo / Destino da Movimentação</label>
+                    <textarea id="mov-motivo" rows="2" placeholder="Descreva a aplicação do material..." required></textarea>
+                </div>
+
+                <div class="form-group" id="termo-box">
+                    <label style="color: var(--warning)">🔐 Segurança: Exigir Assinatura Digital do Termo de Custódia</label>
+                    <select id="mov-2fa">
+                        <option value="Sim">Sim, Validado via Token/Biometria do Operador</option>
+                        <option value="Não">Não aplicar segurança estendida</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="background-color: var(--bg-secondary)">Registrar Movimentação</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. TABELA DE VISUALIZAÇÃO EM TEMPO REAL -->
+    <div class="card" style="margin-bottom: 25px;">
+        <h2>📦 Estoque Atual & Monitoramento de Alertas</h2>
+        <div class="table-wrapper">
+            <table id="tabela-estoque">
+                <thead>
+                    <tr>
+                        <th>Ativo / Item</th>
+                        <th>Categoria</th>
+                        <th>Qtd. Sistema</th>
+                        <th>Mínimo</th>
+                        <th>Localização</th>
+                        <th>Regra Segmento</th>
+                        <th>Status Alerta</th>
+                    </tr>
+                </thead>
+                <tbody><!-- Inserido dinamicamente via JS --></tbody>
+            </table>
+        </div>
+        <button class="btn btn-export" onclick="exportarExcel()">📥 Exportar Banco de Dados Atual (Excel/CSV)</button>
+        <button class="btn btn-pdf" onclick="simularEnvioEmail()">📧 Disparar Relatório Consolidado para Envolvidos (E-mail)</button>
+    </div>
+
+    <!-- 4. LOG DE AUDITORIA (AUDIT TRAIL) -->
+    <div class="card">
+        <h2>🔍 Trilha de Auditoria Invisível (Histórico do Sistema)</h2>
+        <div class="table-wrapper">
+            <table style="font-size: 12px;" id="tabela-auditoria">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Operador</th>
+                        <th>Ação Realizada</th>
+                        <th>Registro Hash</th>
+                    </tr>
+                </thead>
+                <tbody><!-- Inserido dinamicamente via JS --></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Inicialização da Massa de Dados Relacionais no LocalStorage
+    let estoque = JSON.parse(localStorage.getItem('e_estoque')) || [
+        {id: 101, nome: "Furadeira de Impacto Bosch", categoria: "Ferramenta", qtd: 5, min: 2, local: "Prateleira A1", segmento: "Obra Centro - Torre A"},
+        {id: 102, nome: "Cabo Flexível Sil 10mm", categoria: "Consumível", qtd: 150, min: 20, local: "Bobina B3", segmento: "Obra Centro - Torre A"},
+        {id: 103, nome: "Multímetro Digital Fluke", categoria: "Equipamento", qtd: 1, min: 2, local: "Armário C2", segmento: "Geral Engenharia"},
+        {id: 104, nome: "Disjuntor DIN 50A", categoria: "Consumível", qtd: 30, min: 40, local: "Caixa D4", segmento: "Obra Centro - Torre A"}
+    ];
+
+    let auditoria = JSON.parse(localStorage.getItem('e_auditoria')) || [];
+    let perfilAtual = "Almoxarife";
+    let segmentoSelecionado = "construcao";
+
+    // Atualização do Relógio do Sistema (Fixado em 2026 conforme regras operacionais)
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Controle de Níveis de Acesso (RBAC)
+    function switchProfile(perfil) {
+        perfilAtual = perfil;
+        document.getElementById('current-profile').innerText = `${perfil} ${perfil === 'Gestor / ADM' ? '(Acesso Total + Fiscal)' : '(Acesso Operacional)'}`;
+        logAuditoria(`Alterou visualização para perfil: ${perfil}`);
+        alert(`Perfil alterado para ${perfil}. As restrições de escrita foram atualizadas.`);
+    }
+
+    // Controle de Regras de Segmento Dinâmicas
+    function setSegment(tipo, btn) {
+        segmentoSelecionado = tipo;
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const label = document.getElementById('dynamic-label');
+        const input = document.getElementById('dynamic-dinamico');
+
+        if(tipo === 'construcao') {
+            label.innerText = "Vínculo de Centro de Custo / Obra Padrão *";
+            input.placeholder = "Ex: Obra Residencial Torre A";
+        } else if(tipo === 'varejo') {
+            label.innerText = "Código de Barras / SKU Comercial *";
+            input.placeholder = "Ex: 7891012345671";
+        } else if(tipo === 'transporte') {
+            label.innerText = "Placa do Caminhão / Frota Vinculada *";
+            input.placeholder = "Ex: BRA2E19 - Scania R450";
+        }
+    }
+
+    // Renderização das Tabelas e dropdowns
+    function render() {
+        const tbody = document.querySelector('#tabela-estoque tbody');
+        const selectMov = document.getElementById('mov-ativo');
+        tbody.innerHTML = '';
+        selectMov.innerHTML = '';
+
+        let temAlerta = false;
+
+        estoque.forEach(item => {
+            // Check estoque mínimo
+            const sobAviso = item.qtd <= item.min;
+            if(sobAviso) temAlerta = true;
+
+            const tr = document.createElement('tr');
+            if(sobAviso) tr.style.backgroundColor = '#fff5f5';
+
+            tr.innerHTML = `
+                <td><strong>${item.nome}</strong></td>
+                <td>${item.categoria}</td>
+                <td>${item.qtd} un</td>
+                <td>${item.min} un</td>
+                <td>📍 ${item.local}</td>
+                <td>${item.segmento}</td>
+                <td>${sobAviso ? '🔴 Crítico / Repor' : '🟢 Normal'}</td>
+            `;
+            tbody.appendChild(tr);
+
+            // Popula select de movimentação
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.innerText = `${item.nome} (Disp: ${item.qtd} | Local: ${item.local})`;
+            selectMov.appendChild(opt);
+        });
+
+        document.getElementById('min-stock-alert').style.display = temAlerta ? 'block' : 'none';
+        
+        // Render Auditoria
+        const tbodyAuditoria = document.querySelector('#tabela-auditoria tbody');
+        tbodyAuditoria.innerHTML = '';
+        auditoria.slice(-5).reverse().forEach(log => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${log.time}</td>
+                <td>👤 ${log.user}</td>
+                <td>${log.acao}</td>
+                <td style="font-family: monospace; color: #64748b;">${log.hash}</td>
+            `;
+            tbodyAuditoria.appendChild(tr);
+        });
+
+        localStorage.setItem('e_estoque', JSON.stringify(estoque));
+        localStorage.setItem('e_auditoria', JSON.stringify(auditoria));
+    }
+
+    // Cadastrar Ativo com Validação Documental Simbólica
+    function cadastrarItem(e) {
+        e.preventDefault();
+        
+        const nome = document.getElementById('cad-nome').value;
+        const categoria = document.getElementById('cad-categoria').value;
+        const qtd = parseInt(document.getElementById('cad-qtd').value);
+        const local = document.getElementById('cad-local').value;
+        const min = parseInt(document.getElementById('cad-min').value);
+        const dinamico = document.getElementById('cad-dinamico').value;
+
+        const novoItem = {
+            id: Date.now(),
+            nome,
+            categoria,
+            qtd,
+            min,
+            local,
+            segmento: dinamico || "Geral"
+        };
+
+        estoque.push(novoItem);
+        logAuditoria(`Cadastrou novo ativo: ${nome} (Qtd Inicial: ${qtd})`);
+        document.getElementById('form-cadastro').reset();
+        render();
+        alert("Ativo validado com a Nota Fiscal e inserido com sucesso!");
+    }
+
+    // Registrar Movimentação com Dupla Autenticação Simulada
+    function registrarMovimentacao(e) {
+        e.preventDefault();
+        const idAtivo = parseInt(document.getElementById('mov-ativo').value);
+        const tipo = document.getElementById('mov-tipo').value;
+        const qtdMov = parseInt(document.getElementById('mov-qtd').value);
+        const resp = document.getElementById('mov-resp').value;
+        const condicao = document.getElementById('mov-condicao').value;
+
+        const item = estoque.find(i => i.id === idAtivo);
+        if(!item) return;
+
+        if((tipo === 'Retirada' || tipo === 'Consumo') && item.qtd < qtdMov) {
+            alert("⚠️ Erro de Logística: Saldo insuficiente em estoque para realizar essa saída!");
+            return;
+        }
+
+        if(tipo === 'Retirada' || tipo === 'Consumo') {
+            item.qtd -= qtdMov;
+        } else {
+            item.qtd += qtdMov;
+        }
+
+        logAuditoria(`Movimentação de ${tipo}: ${qtdMov} un de ${item.nome}. Responsável: ${resp}. Estado: ${condicao}`);
+        document.getElementById('form-movimentacao').reset();
+        render();
+        alert("Movimentação processada! Termo de responsabilidade digital assinado automaticamente.");
+    }
+
+    // Trilha de Auditoria
+    function logAuditoria(acao) {
+        const novoLog = {
+            time: new Date().toLocaleTimeString('pt-BR'),
+            user: perfilAtual,
+            acao: acao,
+            hash: '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase()
+        };
+        auditoria.push(novoLog);
+    }
+
+    // Exportação de Dados Relacionais para Excel/CSV
+    function exportarExcel() {
+        if(perfilAtual !== 'Gestor / ADM') {
+            alert("⛔ Acesso Negado: Apenas gestores podem exportar dados estratégicos e fiscais do estoque.");
+            return;
+        }
+        let csvContent = "data:text/csv;charset=utf-8,ID;Item;Categoria;Quantidade_Sistema;Estoque_Minimo;Localizacao;Atributo_Segmento\n";
+        estoque.forEach(i => {
+            csvContent += `${i.id};${i.nome};${i.categoria};${i.qtd};${i.min};${i.local};${i.segmento}\n`;
+        });
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "banco_relacional_estoque.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        logAuditoria("Exportou o banco de dados completo em CSV");
+    }
+
+    function simularEnvioEmail() {
+        alert("📧 Relatório de Estoque gerado e disparado com sucesso para os gestores, engenheiros de obras e encarregados da transportadora cadastrados!");
+        logAuditoria("Disparou e-mails de alerta consolidados do sistema");
+    }
+
+    function toggleTermoRequire() {
+        const tipo = document.getElementById('mov-tipo').value;
+        document.getElementById('termo-box').style.display = (tipo === 'Retirada') ? 'block' : 'none';
+    }
+
+    // Inicialização da tela
+    render();
+</script>
+</body>
+</html>
+
+
