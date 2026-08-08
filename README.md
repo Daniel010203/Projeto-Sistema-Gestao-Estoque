@@ -1,4 +1,4 @@
-# 📦 E-Gestão Integrada de Estoque & WMS
+# 📦 WMS Inteligente - Sistema de Gestão de Estoque.
 
 > Sistema completo de Gestão de Estoque (WMS) desenvolvido em **HTML, CSS e JavaScript**, simulando processos utilizados em centros de distribuição, almoxarifados e operações logísticas.
 
