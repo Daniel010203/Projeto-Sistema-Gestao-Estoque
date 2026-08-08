@@ -11,7 +11,7 @@
 
 ## 📖 Sobre o Projeto
 
-O **E-Gestão Integrada de Estoque & WMS** foi desenvolvido para simular um sistema moderno de gerenciamento de estoque utilizado em empresas dos setores de logística, varejo, construção civil e transportadoras.
+O  WMS Inteligente - Sistema de Gestão de Estoque foi desenvolvido para simular um sistema moderno de gerenciamento de estoque utilizado em empresas dos setores de logística, varejo, construção civil e transportadoras.
 
 O sistema permite controlar toda a operação de armazenagem, desde o cadastro de produtos até a expedição, utilizando conceitos encontrados em soluções WMS profissionais.
 
