@@ -1,0 +1,638 @@
+ESPECIFICAÇÃO DOS CASOS DE USO:
+
+Excelente. Em Engenharia de Software, os **Casos de Uso** descrevem como cada ator interage com o sistema para atingir um objetivo específico. Eles complementam os requisitos funcionais e servirão de base para a modelagem UML, prototipação, testes e desenvolvimento.
+
+A seguir, apresento uma primeira versão da **Especificação de Casos de Uso** para o sistema de **Extração Inteligente de Dados Documentais (IDP - Intelligent Document Processing)**.
+
+---
+
+# ESPECIFICAÇÃO DE CASOS DE USO
+
+## Sistema Inteligente de Extração e Processamento de Documentos
+
+Versão 1.0
+
+---
+
+# Atores do Sistema
+
+| Ator          | Descrição                                                    |
+| ------------- | ------------------------------------------------------------ |
+| Administrador | Responsável pela configuração geral do sistema               |
+| Analista      | Responsável por validar informações extraídas                |
+| Operador      | Responsável pelo envio dos documentos                        |
+| Auditor       | Consulta histórico e logs                                    |
+| Sistema OCR   | Serviço responsável pela leitura de documentos digitalizados |
+| Sistema de IA | Responsável pela classificação e extração inteligente        |
+| API Externa   | Sistemas ERP, SAP, TOTVS, Power BI etc.                      |
+
+---
+
+# UC01 – Autenticar Usuário
+
+## Objetivo
+
+Permitir que usuários acessem o sistema conforme seu perfil.
+
+### Atores
+
+* Administrador
+* Analista
+* Operador
+* Auditor
+
+### Pré-condições
+
+Usuário cadastrado.
+
+### Fluxo Principal
+
+1. Usuário acessa a tela de Login.
+2. Informa usuário e senha.
+3. Sistema valida as credenciais.
+4. Sistema identifica o perfil.
+5. Sistema apresenta a tela inicial.
+
+### Fluxo Alternativo
+
+3A. Senha inválida.
+
+Sistema informa erro.
+
+### Pós-condição
+
+Usuário autenticado.
+
+---
+
+# UC02 – Upload de Documentos
+
+## Objetivo
+
+Permitir envio de documentos ao sistema.
+
+### Atores
+
+Operador
+
+### Pré-condições
+
+Usuário autenticado.
+
+### Fluxo Principal
+
+1. Selecionar arquivos.
+2. Escolher pasta ou arrastar arquivos.
+3. Confirmar envio.
+4. Sistema valida formato.
+5. Sistema salva arquivos.
+6. Sistema inicia processamento.
+
+### Fluxos Alternativos
+
+Arquivo corrompido.
+
+Formato não permitido.
+
+Arquivo duplicado.
+
+### Pós-condição
+
+Documento armazenado.
+
+---
+
+# UC03 – Processar Documentos
+
+## Objetivo
+
+Realizar o processamento automático dos documentos.
+
+### Atores
+
+Sistema
+
+### Fluxo Principal
+
+1. Ler documento.
+2. Identificar formato.
+3. Classificar documento.
+4. Enviar para OCR (quando necessário).
+5. Aplicar IA.
+6. Extrair informações.
+7. Validar dados.
+8. Salvar resultados.
+
+### Pós-condição
+
+Documento processado.
+
+---
+
+# UC04 – Identificar Tipo Documental
+
+## Objetivo
+
+Reconhecer automaticamente o tipo de documento.
+
+### Atores
+
+Sistema IA
+
+### Fluxo Principal
+
+Receber documento.
+
+Analisar layout.
+
+Comparar modelo.
+
+Identificar categoria.
+
+### Categorias
+
+* Nota Fiscal
+* XML Fiscal
+* Contrato
+* Relatório
+* Planilha
+* Comprovante
+* Boleto
+* Documento Personalizado
+
+---
+
+# UC05 – Executar OCR
+
+## Objetivo
+
+Extrair texto de documentos digitalizados.
+
+### Atores
+
+OCR
+
+### Fluxo Principal
+
+Receber PDF.
+
+Converter imagem.
+
+Reconhecer texto.
+
+Enviar texto ao sistema.
+
+---
+
+# UC06 – Extrair Dados
+
+## Objetivo
+
+Capturar automaticamente informações relevantes.
+
+### Atores
+
+Sistema IA
+
+### Fluxo Principal
+
+Ler conteúdo.
+
+Aplicar regras.
+
+Aplicar Regex.
+
+Aplicar IA.
+
+Localizar campos.
+
+Retornar informações.
+
+---
+
+# UC07 – Validar Dados
+
+## Objetivo
+
+Verificar consistência das informações.
+
+### Atores
+
+Sistema
+
+Analista
+
+### Fluxo Principal
+
+Validar CPF.
+
+Validar CNPJ.
+
+Validar datas.
+
+Validar valores.
+
+Verificar duplicidade.
+
+Comparar regras.
+
+### Fluxo Alternativo
+
+Campo inválido.
+
+Sistema envia para revisão.
+
+---
+
+# UC08 – Revisar Extração
+
+## Objetivo
+
+Permitir correção manual.
+
+### Atores
+
+Analista
+
+### Fluxo Principal
+
+Abrir documento.
+
+Visualizar original.
+
+Visualizar dados extraídos.
+
+Editar campos.
+
+Salvar.
+
+Registrar log.
+
+---
+
+# UC09 – Configurar Regras de Extração
+
+## Objetivo
+
+Cadastrar novas regras.
+
+### Atores
+
+Administrador
+
+### Fluxo Principal
+
+Cadastrar tipo documental.
+
+Cadastrar palavras-chave.
+
+Cadastrar Regex.
+
+Cadastrar campos.
+
+Salvar configuração.
+
+---
+
+# UC10 – Consultar Documentos
+
+## Objetivo
+
+Pesquisar documentos processados.
+
+### Atores
+
+Operador
+
+Analista
+
+Auditor
+
+### Pesquisa
+
+Número
+
+Cliente
+
+Fornecedor
+
+CNPJ
+
+CPF
+
+Valor
+
+Data
+
+Status
+
+---
+
+# UC11 – Exportar Dados
+
+## Objetivo
+
+Exportar resultados.
+
+### Atores
+
+Analista
+
+Administrador
+
+### Formatos
+
+Excel
+
+CSV
+
+JSON
+
+XML
+
+PDF
+
+---
+
+# UC12 – Dashboard
+
+## Objetivo
+
+Apresentar indicadores.
+
+### Atores
+
+Administrador
+
+Supervisor
+
+### Indicadores
+
+Quantidade processada
+
+Tempo médio
+
+Taxa de sucesso
+
+Falhas
+
+OCR
+
+Documentos pendentes
+
+Produtividade
+
+---
+
+# UC13 – Gerenciar Usuários
+
+## Objetivo
+
+Administrar usuários.
+
+### Atores
+
+Administrador
+
+### Fluxo Principal
+
+Cadastrar.
+
+Editar.
+
+Excluir.
+
+Alterar perfil.
+
+Bloquear.
+
+---
+
+# UC14 – Consultar Logs
+
+## Objetivo
+
+Consultar auditoria.
+
+### Atores
+
+Administrador
+
+Auditor
+
+### Informações
+
+Usuário.
+
+Documento.
+
+Ação.
+
+Data.
+
+Hora.
+
+IP.
+
+Resultado.
+
+---
+
+# UC15 – Integrar com ERP
+
+## Objetivo
+
+Enviar dados para sistemas externos.
+
+### Atores
+
+Sistema
+
+API
+
+### Fluxo Principal
+
+Selecionar documento.
+
+Gerar JSON.
+
+Enviar API.
+
+Receber resposta.
+
+Registrar retorno.
+
+---
+
+# UC16 – Agendamento Automático
+
+## Objetivo
+
+Processar documentos automaticamente.
+
+### Atores
+
+Sistema
+
+### Fluxo
+
+Monitorar pasta.
+
+Novo arquivo encontrado.
+
+Importar.
+
+Processar.
+
+Salvar.
+
+---
+
+# UC17 – Treinamento da IA
+
+## Objetivo
+
+Permitir aprendizado contínuo.
+
+### Atores
+
+Administrador
+
+IA
+
+### Fluxo Principal
+
+Usuário corrige informação.
+
+Sistema registra alteração.
+
+Modelo recebe feedback.
+
+Treinamento periódico.
+
+---
+
+# UC18 – Administração do Sistema
+
+## Objetivo
+
+Configurar parâmetros.
+
+### Atores
+
+Administrador
+
+### Configurações
+
+OCR
+
+IA
+
+Banco
+
+API
+
+Backup
+
+Notificações
+
+Permissões
+
+---
+
+# UC19 – Backup
+
+## Objetivo
+
+Executar backup automático.
+
+### Atores
+
+Sistema
+
+Administrador
+
+### Fluxo Principal
+
+Criar backup.
+
+Compactar.
+
+Enviar armazenamento.
+
+Registrar log.
+
+---
+
+# UC20 – Monitorar Processamentos
+
+## Objetivo
+
+Acompanhar o andamento da fila de processamento em tempo real.
+
+### Atores
+
+Administrador
+
+Supervisor
+
+### Fluxo Principal
+
+1. Acessar painel de monitoramento.
+2. Visualizar fila de documentos.
+3. Verificar status de cada processamento.
+4. Identificar falhas ou documentos pendentes.
+5. Reprocessar documentos, se necessário.
+
+---
+
+# Relacionamento entre Casos de Uso
+
+```text
+                UC01 - Autenticar Usuário
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+     UC02              UC10              UC13
+ Upload             Consultar        Gerenciar
+Documentos         Documentos        Usuários
+        │
+        ▼
+UC03 - Processar Documento
+        │
+        ├──────────────┐
+        ▼              ▼
+UC04              UC05
+Identificar       OCR
+Documento
+        │              │
+        └──────┬───────┘
+               ▼
+       UC06 - Extrair Dados
+               │
+               ▼
+       UC07 - Validar Dados
+               │
+      ┌────────┴─────────┐
+      ▼                  ▼
+ UC08 Revisão      UC15 Integração ERP
+               │
+               ▼
+      UC11 Exportação
+               │
+               ▼
+        UC12 Dashboard
+```
+
+## Próxima etapa recomendada
+
+Esta especificação contempla os principais fluxos do sistema, mas para um projeto de contratação de software eu recomendaria expandi-la para cerca de **35 a 45 Casos de Uso**, cobrindo cenários de exceção, administração e integrações. Em seguida, desenvolveríamos:
+
+1. **Diagrama UML de Casos de Uso** (visão gráfica dos atores e funcionalidades).
+2. **Diagramas de Atividade** para cada processo principal.
+3. **Diagramas de Sequência** mostrando a interação entre usuário, sistema, OCR, IA e banco de dados.
+4. **Modelo Entidade-Relacionamento (MER)** do banco de dados.
+5. **Protótipos (Wireframes)** das telas.
+6. **Backlog do Produto** com Épicos, Features e Histórias de Usuário para execução em Scrum.
+
+Essa documentação é a que normalmente é utilizada por empresas de desenvolvimento para estimar esforço, definir arquitetura e iniciar a implementação com menor risco de retrabalho.

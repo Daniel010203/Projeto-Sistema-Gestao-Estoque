@@ -1,0 +1,65 @@
+=== tb_categorias (Atributos Expandidos: id, nome, criticidade, depto_responsavel, ipi_padrao, icms_padrao, tempo_vida_util_meses, seguro_obrigatorio, exige_treinamento, ... +90 colunas de metadados) ===
+id_categoria;nome_categoria;criticidade_abc;depto_responsavel;aliquota_ipi;tempo_vida_meses;exige_treinamento_nr;tipo_armazenamento_especial;revisao_obrigatoria_dias
+1;Ferramenta Manobra;A;Produção Civil;10.00;36;Sim;Não;90
+2;Equipamento Pesado;A;Operações;15.00;60;Sim;Não;30
+3;Consumível Rápido;C;Almoxarifado;0.00;12;Não;Não;0
+4;EPI Individual;B;Segurança do Trabalho (SESMT);0.00;6;Sim;Sim;180
+5;Material Elétrico;B;Engenharia Elétrica;5.00;120;Sim;Não;0
+
+=== tb_enderecos_fisicos (Atributos Expandidos: id, codigo, descricao, capacidade_peso_kg, umidade_max, temperatura_max, zoneamento_incendio, trancado, ... +92 colunas) ===
+id_endereco;localizacao_codigo;descricao_espaco;capacidade_carga_kg;umidade_maxima_pct;requer_refrigeracao;sensor_presenca_id;doca_acesso;responsavel_bancada
+1;PRAT-A1;Prateleira A1 - Almoxarifado Central;500;60;Não;SNSR-001;Doca 02;Claudio Ramos
+2;BOB-B3;Bobina B3 - Área de Cabos;2000;80;Não;SNSR-002;Doca 01;Claudio Ramos
+3;ARM-C2;Armário C2 - Ferramentas de Precisão;150;45;Sim;SNSR-009;Doca 02;Ana Silva
+4;CX-D4;Caixa D4 - Conectores e Disjuntores;50;70;Não;N/A;Doca 02;Ana Silva
+5;CONTAINER-01;Container Almoxarifado - Obra Centro;5000;90;Não;SNSR-055;Canteiro;Marcos Souza
+
+=== tb_ativos_itens (Atributos Expandidos: id, nome, id_categoria, qtd_sistema, id_endereco_padrao, numero_serie, modelo, fabricante, sku, codigo_barras, tag_patrimonio, peso_kg, voltagem, data_aquisicao, valor_unitario, garantia_meses, ncm, cest, ... +82 colunas) ===
+id_ativo;nome_ativo;id_categoria;qtd_sistema;id_endereco_padrao;numero_serie;marca_fabricante;sku_interno;codigo_barras;tag_patrimonio;valor_unitario_brl;data_compra;garantia_meses;ncm_fiscal;voltagem_operacao;peso_liquido_kg;certificado_calibracao;status_depreciacao
+101;Furadeira de Impacto Bosch;1;5;1;BSH-88392-X;Bosch;FER-FUR-001;7891012345671;PAT-2026-0041;850.00;2026-01-10;24;8467.21.00;220V;2.3;Sim;Ativo
+102;Cabo Flexível Sil 10mm (Metro);5;150;2;SIL-2026-M9;Sil Fios;MAT-CAB-010;7891012345688;N/A;14.50;2026-05-12;12;7413.00.00;750V;0.15;Não;Consumido
+103;Multímetro Digital Fluke;2;2;3;FLK-99211-M;Fluke;EQP-MUL-002;7891012345695;PAT-2026-0099;3200.00;2026-02-20;36;9030.33.21;Bateria 9V;0.4;Sim;Ativo
+104;Disjuntor DIN 50A;3;30;4;DJ-50A-DIN;Siemens;MAT-DIS-050;7891012345701;N/A;45.00;2026-06-01;12;8536.20.00;415V;0.12;Não;Consumido
+105;Serra Circular Dewalt;1;3;1;DWT-77412-Z;Dewalt;FER-SER-002;7891012345718;PAT-2026-0102;1150.00;2026-03-15;12;8467.22.00;110V;3.8;Sim;Ativo
+
+=== tb_obras_projetos (Atributos Expandidos: id, nome, endereco, orcamento_total, data_inicio, data_fim_prevista, engenheiro_chefe, alvara_numero, ceis_status, ... +91 colunas) ===
+id_obra;nome_obra;endereco_obra;orcamento_previsto;data_inicio;data_entrega_prevista;engenheiro_responsavel;crea_responsavel;numero_alvara;latitude;longitude;status_licenca_ambiental
+10;Obra Centro - Residencial Torre A;Av. Rio Branco, 500;15000000.00;2025-01-10;2200000.00;2027-12-31;Ana Beatriz;CREA-RJ 123456;ALV-2025-992;-22.9035;-43.1789;Regularizada
+20;Obra Niteroi - Reforma Comercial;Rua XV de Novembro, 12;450000.00;2026-03-01;2026-10-15;Marcos Souza;CREA-RJ 987654;ALV-2026-114;-22.8932;-43.1242;Isento
+30;Manutenção Preventiva Geral;Almoxarifado Central;0.00;2024-01-01;2030-12-31;Ana Beatriz;CREA-RJ 123456;N/A;0.0000;0.0000;Regularizada
+
+=== tb_funcionarios (Atributos Expandidos: id, nome, cargo, registro_re, cpf, rg, data_admissao, cnh_numero, cnh_categoria, aso_validade, nr10_validade, nr35_validade, ... +88 colunas) ===
+id_funcionario;nome_funcionario;cargo;registro_re;cpf_mascarado;data_admissao;validade_aso;validade_nr10;validade_nr35;contato_emergencia;tipo_sanguineo;epi_tamanho_calcado
+501;Carlos Silva;Técnico Eletricista;RE-9921;***.342.117-**;2024-05-10;2027-05-10;2027-06-15;2026-12-20;Maria Silva (Esposa);O+;41
+502;Marcos Souza;Encarregado de Obras;RE-4412;***.112.987-**;2022-11-01;2026-11-01;N/A;2027-02-14;Jorge Souza (Irmão);A+;42
+503;Ana Beatriz;Engenheira Civil;RE-1105;***.887.237-**;2025-02-15;2027-02-15;N/A;N/A;Paulo Beatriz (Pai);AB-;37
+
+=== tb_condicoes_fisicas (Atributos Expandidos: id, descricao, depreciacao_contabil_pct, exige_manutencao, criticidade_seguranca, ... +95 colunas) ===
+id_condicao;descricao_condicao;taxa_depreciacao_extra;permite_uso_imediato;bloqueia_movimentacao;exige_laudo_tecnico;grau_risco_operacional
+1;Excelente / Sem Detalhes;0.00;Sim;Não;Não;Baixo
+2;Bom / Uso Normal;0.05;Sim;Não;Não;Baixo
+3;Com Avarias Leves;0.15;Sim;Não;Não;Médio
+4;⚠️ Avariado / Danificado;0.50;Não;Sim;Sim;Alto
+
+=== tb_tipos_movimentacao (Atributos Expandidos: id, descricao, impacto_saldo, requer_assinatura_digital, exige_termo_impresso, ... +95 colunas) ===
+id_tipo_mov;descricao_mov;impacto_saldo;requer_termo_custodia;gera_notificacao_email;contabiliza_custo_obra;fluxo_reversivel
+1;Retirada (Para Uso/Custódia);Negativo (Bloqueado/Em Uso);Sim;Sim;Sim;Sim
+2;Devolução ao Estoque;Positivo (Disponível);Sim;Sim;Não;Não
+3;Consumo Interno (Baixa Definitiva);Negativo (Subtraído);Não;Sim;Sim;Não
+
+=== tb_movimentacoes_estoque (Atributos Expandidos: id, data, id_ativo, id_tipo_mov, quantidade, id_funcionario, id_obra, id_condicao, motivo, custo_total_mov, ticket_sistema, ip_origem, hash_seguranca, ... +87 colunas) ===
+id_mov;data_movimentacao;id_ativo;id_tipo_mov;quantidade;id_funcionario;id_obra;id_condicao;motivo;custo_calculado_brl;hash_transacao;usuario_logado_id;aprovador_gestor_id
+2001;2026-07-15 08:30;103;1;1;501;10;1;Manutenção preventiva nos painéis da Torre A;0.00;a8f5b2c9e13d;user_carlos;mgr_fernando
+2002;2026-07-16 10:15;102;3;50;502;10;2;Instalação da prumada elétrica principal;725.00;b2e4f5a1c78d;user_marcos;mgr_fernando
+2003;2026-07-17 16:00;101;1;2;502;20;2;Perfuração de lajes na Obra Niterói;0.00;c7d8e9f0a1b2;user_marcos;mgr_roberto
+2004;2026-07-18 09:00;103;2;1;501;10;2;Retorno do multímetro após conclusão dos testes;0.00;d1c2b3a4e5f6;user_carlos;mgr_fernando
+
+=== tb_auditorias_inventario (Atributos Expandidos: id, data, id_ativo, qtd_sistema, qtd_fisica, id_funcionario_auditor, status, diferenca, valor_ajuste, ... +91 colunas) ===
+id_auditoria;data_auditoria;id_ativo;qtd_sistema;qtd_fisica_encontrada;id_funcionario_auditor;status_auditoria;quantidade_divergente;valor_prejuizo_ajuste
+3001;2026-07-10;101;5;5;503;Divergência Zero;0;0.00
+3002;2026-07-10;104;32;30;503;⚠️ Perda de unidades (Ajustado no Sistema);-2;90.00
+
+=== tb_fornecedores (Atributos Expandidos: id, nome, cnpj, telefone, inscricao_estadual, inscricao_municipal, endereco_matriz, email_nfe, score_entrega, ... +91 colunas) ===
+id_fornecedor;nome_fantasia;cnpj;contato_telefone;inscricao_estadual;email_faturamento;score_confiabilidade_1a10;prazo_medio_entrega_dias;status_compliance
+901;Eletro Comercial Silva;12.345.678/0001-00;(21) 9999-9999;123.456.789.110;nfe@eletrosilva.com.br;9.2;3;Aprovado
+902;Dewalt Brasil Ferramentas;98.765.432/0001-11;0800-777-2222;987.654.321.001;garantias@dewalt.com.br;9.8;7;Aprovado
