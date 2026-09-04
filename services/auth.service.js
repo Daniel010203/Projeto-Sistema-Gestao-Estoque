@@ -1,1 +1,0 @@
-window.AuthService=Object.freeze({login(email,password){return BackendService.post(window.APP_CONFIG.api.auth,{action:'login',email,password});},logout(){return BackendService.post(window.APP_CONFIG.api.auth,{action:'logout'});}});

@@ -1,1 +1,0 @@
-window.DocumentService=Object.freeze({upload(itemId,file){const f=new FormData();f.append('itemId',itemId);f.append('documento',file);return BackendService.request(window.APP_CONFIG.api.document,{method:'POST',body:f});}});

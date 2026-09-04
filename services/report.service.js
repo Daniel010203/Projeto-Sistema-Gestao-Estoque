@@ -1,1 +1,0 @@
-window.ReportService=Object.freeze({url(module='estoque',period='daily'){return `${window.APP_CONFIG.api.report}?module=${encodeURIComponent(module)}&period=${encodeURIComponent(period)}`;},open(module,period){window.open(this.url(module,period),'_blank');}});
